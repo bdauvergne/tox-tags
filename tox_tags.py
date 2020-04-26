@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 
 import os
-import tox
 
-@tox.hookimpl
+import pluggy
+
+hookimpl = pluggy.HookimplMarker("tox")
+
+
+@hookimpl
 def tox_addoption(parser):
     # Grab `tags` config from [testenv] sections.
     parser.add_testenv_attribute(
@@ -21,13 +25,13 @@ def tox_addoption(parser):
     )
 
 
-@tox.hookimpl
+@hookimpl
 def tox_configure(config):
     tags = config.option.tags
     if not tags and 'TOX_TAGS' in os.environ:
         tags = os.environ['TOX_TAGS'].split(':')
     if tags:
-        rules = map(_make_rule, tags)
+        rules = list(map(_make_rule, tags))
         # Note: keep envlist in original order!
         config.envlist = [
             envname for envname in config.envlist
@@ -47,7 +51,8 @@ def _select(rules, tags):
 
 
 def _make_rule(rule):
-    rule = map(_compile, rule.split(','))
+    rule = list(map(_compile, rule.split(',')))
+
     def _match_rule(tags):
         return all(subrule(tags) for subrule in rule)
     return _match_rule
