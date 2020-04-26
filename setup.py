@@ -8,7 +8,7 @@ setup(
     description='Adds tags for running subsets of Tox environments.',
     maintainer='Andre Caron',
     maintainer_email='andre.l.caron@gmail.com',
-    version='0.1.0',
+    version='0.2.0.dev1',
     py_modules=[
         'tox_tags',
     ],
